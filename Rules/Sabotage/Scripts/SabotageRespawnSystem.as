@@ -74,23 +74,17 @@ class SabotageRespawnSystem : RespawnSystem {
     if (map !is null) {
       u8 teamNumber = playerInfo.team;
 
-      CBlob@ pickSpawn = getBlobByNetworkID(playerInfo.spawn_point);
-      if (pickSpawn != null
-         && pickSpawn.hasTag("respawn")
-         && pickSpawn.getTeamNum() == playerInfo.team) {
-           return pickSpawn.getPosition();
-      } else {
-        CBlob@[] spawns;
-        PopulateSpawnList(spawns, playerInfo.team);
+      CBlob@[] spawns;
+      getBlobsByTag("respawn", @spawns);
 
-        for (uint step = 0; step < spawns.length; ++step)
+      for (uint step = 0; step < spawns.length; ++step)
+      {
+        if (spawns[step].getTeamNum() == s32(playerInfo.team))
         {
-          if (spawns[step].getTeamNum() == s32(playerInfo.team))
-          {
-            return spawns[step].getPosition();
-          }
+          return spawns[step].getPosition();
         }
       }
     }
+    return Vec2f(0,0);
   }
 }
