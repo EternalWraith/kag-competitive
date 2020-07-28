@@ -59,9 +59,38 @@ class SabotageRespawnSystem : RespawnSystem {
   void DoSpawnPlayer(PlayerInfo@ playerInfo) override {
     BaseTeamInfo teamInfo = core.teams[playerInfo.team];
 
+    playerInfo.blob_name = "builder";
+
     RespawnSystem::DoSpawnPlayer(playerInfo);
 
     return;
   }
 
+  Vec2f getSpawnLocation(PlayerInfo@ playerInfo) override {
+    Vec2f result;
+
+    CMap@ map = getMap();
+
+    if (map !is null) {
+      u8 teamNumber = playerInfo.team;
+
+      CBlob@ pickSpawn = getBlobByNetworkID(playerInfo.spawn_point);
+      if (pickSpawn != null
+         && pickSpawn.hasTag("respawn")
+         && pickSpawn.getTeamNum() == playerInfo.team) {
+           return pickSpawn.getPosition();
+      } else {
+        CBlob@[] spawns;
+        PopulateSpawnList(spawns, playerInfo.team);
+
+        for (uint step = 0; step < spawns.length; ++step)
+        {
+          if (spawns[step].getTeamNum() == s32(playerInfo.team))
+          {
+            return spawns[step].getPosition();
+          }
+        }
+      }
+    }
+  }
 }
