@@ -61,6 +61,8 @@ class SabotageRespawnSystem : RespawnSystem {
 
     playerInfo.blob_name = "builder";
 
+    CBlob@ playerBlob;
+    @playerBlob = SpawnPlayerIntoWorld(getSpawnLocation(playerInfo), playerInfo);
     RespawnSystem::DoSpawnPlayer(playerInfo);
 
     return;
